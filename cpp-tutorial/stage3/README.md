@@ -1,32 +1,39 @@
-# Stage 3
+# Stage 1
 
-In this stage we step it up and showcase how to integrate multiple ```cc_library``` targets from different packages.
+This showcases how to build a single file to create a runnable application.
 
-Below, we see a similar configuration from Stage 2, except that this BUILD file is in a subdirectory called lib. In Bazel, subdirectories containing BUILD files are known as packages. The new property ```visibility``` will tell Bazel which package(s) can reference this target, in this case the ```//main``` package can use ```hello-time``` library. 
-
-```
-cc_library(
-    name = "hello-time",
-    srcs = ["hello-time.cc"],
-    hdrs = ["hello-time.h"],
-    visibility = ["//main:__pkg__"],
-)
-```
-
-To use our ```hello-time``` library, an extra dependency is added in the form of //path/to/package:target_name, in this case, it's ```//lib:hello-time```
+This BUILD file shows that we want to build a C++ binary using the ```cc_binary``` rule provided by Bazel.
+In the ```cc_binary``` rule, name of the binary is specified in ```name``` attribute (in this example, it's ```hello-world```), required source files to be built are provided in ```srcs``` attribute.
 
 ```
 cc_binary(
     name = "hello-world",
     srcs = ["hello-world.cc"],
-    deps = [
-        ":hello-greet",
-        "//lib:hello-time",
-    ],
 )
 ```
 
 To build this example, use
 ```
 bazel build //main:hello-world
+```
+
+If the build is successful, Bazel prints the output similar to
+```
+____Loading complete.  Analyzing...
+____Found 1 target...
+____Building...
+Target //main:hello-world up-to-date:
+  C:/tools/msys64/tmp/_bazel_woden/vqeu6v3v/execroot/__main__/bazel-out/msvc_x64-fastbuild/bin/main/hello-world.exe
+____Elapsed time: 0,400s, Critical Path: 0,01s
+```
+
+In the run log above you can see where the executable was built so you can locate it and use it.
+
+You can also get the output path with the bazel cquery command. For
+example, the command below would print the path to the output file. This
+is a useful technique for use in scripts, where you do not want to parse the
+`bazel build` output.
+
+```
+bazel cquery --output=files //main:hello-world
 ```
