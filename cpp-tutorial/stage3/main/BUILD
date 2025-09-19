@@ -1,5 +1,4 @@
 
-
 cc_library(
     name = "hello-greet",
     srcs = ["hello-greet.cc"],
